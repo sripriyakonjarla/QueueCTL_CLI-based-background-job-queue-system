@@ -84,7 +84,7 @@ queuectl config get
 
 ## 🏗️ Architecture
 
-![Architecture Diagram](./architecture.png)
+![Architecture Diagram](./Architecture_Diagram.png)
 
 ### Job Lifecycle
 
