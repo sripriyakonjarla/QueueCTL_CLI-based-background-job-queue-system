@@ -25,7 +25,7 @@ A production-grade CLI-based background job queue system with worker processes, 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd Flam
+cd project
 ```
 
 2. Install dependencies:
@@ -53,21 +53,6 @@ queuectl enqueue '{"id":"job1","command":"echo Hello World"}'
 ```bash
 queuectl enqueue '{"id":"job2","command":"sleep 2"}'
 ```
-
-**Alternative methods for PowerShell users:**
-
-Using a file (recommended for complex commands):
-```powershell
-# Create job.json with your job data
-queuectl enqueue --file job.json
-```
-
-Using escaped quotes:
-```powershell
-queuectl enqueue '{\"id\":\"job1\",\"command\":\"echo Hello\"}'
-```
-
-**Note:** The CLI automatically handles PowerShell's quote-stripping behavior, so the standard syntax works across all platforms.
 
 #### Start Workers
 
@@ -149,39 +134,7 @@ queuectl config get max-retries
 queuectl config get
 ```
 
-## 🏗️ Architecture
 
-### Job Lifecycle
-
-```
-pending → processing → completed
-              ↓
-            failed → (retry with backoff) → failed → ... → dead (DLQ)
-```
-
-### Components
-
-1. **Job Model** (`queuectl/job.py`)
-   - Represents a background job with state management
-   - States: `pending`, `processing`, `completed`, `failed`, `dead`
-
-2. **Storage** (`queuectl/storage.py`)
-   - SQLite-based persistent storage
-   - Thread-safe job operations
-   - Row-level locking prevents duplicate processing
-
-3. **Worker** (`queuectl/worker.py`)
-   - Executes jobs in separate processes
-   - Handles retries with exponential backoff
-   - Graceful shutdown support
-
-4. **Configuration** (`queuectl/config.py`)
-   - Singleton pattern for global config
-   - Stored in `~/.queuectl/config.json`
-
-5. **CLI** (`queuectl/cli.py`)
-   - Click-based command interface
-   - All operations accessible via CLI
 
 ### Data Persistence
 
@@ -317,21 +270,7 @@ A working CLI demo video is available at: [Demo Video Link](https://drive.google
 
 *Note: Replace the link above with your actual demo video URL after uploading.*
 
-## 📝 License
 
-This project is part of a backend developer internship assignment.
 
-## 🎯 Future Enhancements (Bonus Features)
 
-Potential improvements:
-- Job timeout handling per job
-- Job priority queues
-- Scheduled/delayed jobs (`run_at` field)
-- Job output logging
-- Metrics and execution statistics
-- Minimal web dashboard for monitoring
-
----
-
-**Note**: This is a minimal production-grade implementation. For production use at scale, consider additional features like distributed workers, job result storage, and monitoring integrations.
 
