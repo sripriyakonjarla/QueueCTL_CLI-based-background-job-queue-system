@@ -15,8 +15,8 @@ A production-grade CLI-based background job queue system with parallel workers, 
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd project
+git clone <https://github.com/sripriyakonjarla/QueueCTL_CLI-based-background-job-queue-system>
+cd QUEUECTL
 
 # Install dependencies
 pip install -r requirements.txt
