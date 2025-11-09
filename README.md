@@ -322,7 +322,7 @@ delay = backoff_base ^ attempts (seconds)
 - 5-minute timeout per job to prevent hanging
 - STDOUT/STDERR captured for debugging
 
-## ⚙️ Configuration
+## Configuration
 
 ### Default Settings
 
@@ -346,7 +346,7 @@ delay = backoff_base ^ attempts (seconds)
 - **Format**: JSON
 - **Persistence**: Settings persist across restarts
 
-## 🧪 Testing
+## Testing
 
 ### Automated Test Suite
 
@@ -388,7 +388,7 @@ queuectl worker start --count 2
 queuectl status
 ```
 
-## 🔑 Design Decisions & Trade-offs
+## Design Decisions & Trade-offs
 
 ### Technology Choices
 
@@ -435,9 +435,9 @@ queuectl status
 - Disk I/O for database
 - Process spawning overhead
 
-## 🎥 Demo Video
+## Demo Video
 
-📹 **[Watch the 2-minute demo video](https://drive.google.com/file/d/18xKKzVBjWCglWYNHUxclJF1MKNJjA-Rv/view?usp=sharing)**
+**[Watch the demo video](https://drive.google.com/file/d/18xKKzVBjWCglWYNHUxclJF1MKNJjA-Rv/view?usp=sharing)**
 
 The demo covers:
 1. Enqueuing multiple jobs
@@ -447,7 +447,7 @@ The demo covers:
 5. Retrying jobs from DLQ
 6. Configuration management
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -523,7 +523,7 @@ pip install -e .
 pip list | grep queuectl
 ```
 
-## 📚 Additional Resources
+## Additional Resources
 
 ### Project Structure
 
@@ -550,13 +550,13 @@ QueueCTL/
 - **Error Handling**: Graceful error messages
 - **Thread Safety**: Proper locking mechanisms
 
-## 📝 License
+## License
 
 MIT License - feel free to use for learning and projects.
 
 ## 👤 Author
 
-**Sri Priya Konjarla**
+**Sripriya Konjarla**
 - GitHub: [@sripriyakonjarla](https://github.com/sripriyakonjarla)
 - Repository: [QueueCTL](https://github.com/sripriyakonjarla/QueueCTL_CLI-based-background-job-queue-system)
 
