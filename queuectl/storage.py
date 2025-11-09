@@ -57,15 +57,22 @@ class Storage:
         """Add a new job to storage."""
         with self._get_connection() as conn:
             try:
+                # Convert timezone-aware datetimes to naive UTC
+                created_at = job.created_at.replace(tzinfo=None) if job.created_at.tzinfo else job.created_at
+                updated_at = job.updated_at.replace(tzinfo=None) if job.updated_at.tzinfo else job.updated_at
+                next_retry_at = None
+                if job.next_retry_at:
+                    next_retry_at = job.next_retry_at.replace(tzinfo=None) if job.next_retry_at.tzinfo else job.next_retry_at
+                
                 conn.execute("""
                     INSERT INTO jobs (id, command, state, attempts, max_retries, 
                                     created_at, updated_at, next_retry_at, worker_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     job.id, job.command, job.state.value, job.attempts,
-                    job.max_retries, job.created_at.isoformat() + "Z",
-                    job.updated_at.isoformat() + "Z",
-                    job.next_retry_at.isoformat() + "Z" if job.next_retry_at else None,
+                    job.max_retries, created_at.isoformat() + "Z",
+                    updated_at.isoformat() + "Z",
+                    next_retry_at.isoformat() + "Z" if next_retry_at else None,
                     None
                 ))
                 conn.commit()
@@ -86,14 +93,20 @@ class Storage:
     def update_job(self, job: Job, worker_id: Optional[str] = None):
         """Update job in storage."""
         with self._get_connection() as conn:
+            # Convert timezone-aware datetimes to naive UTC to avoid double timezone suffixes
+            updated_at = job.updated_at.replace(tzinfo=None) if job.updated_at.tzinfo else job.updated_at
+            next_retry_at = None
+            if job.next_retry_at:
+                next_retry_at = job.next_retry_at.replace(tzinfo=None) if job.next_retry_at.tzinfo else job.next_retry_at
+            
             conn.execute("""
                 UPDATE jobs 
                 SET state = ?, attempts = ?, updated_at = ?, next_retry_at = ?, worker_id = ?
                 WHERE id = ?
             """, (
                 job.state.value, job.attempts,
-                job.updated_at.isoformat() + "Z",
-                job.next_retry_at.isoformat() + "Z" if job.next_retry_at else None,
+                updated_at.isoformat() + "Z",
+                next_retry_at.isoformat() + "Z" if next_retry_at else None,
                 worker_id,
                 job.id
             ))

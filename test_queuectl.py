@@ -7,11 +7,13 @@ import sys
 import os
 from pathlib import Path
 
-# Colors for output
+# ASCII-safe symbols for Windows compatibility
 GREEN = '\033[92m'
 RED = '\033[91m'
 YELLOW = '\033[93m'
 RESET = '\033[0m'
+PASS_SYM = '[PASS]'
+FAIL_SYM = '[FAIL]'
 
 def run_command(cmd, timeout=30):
     """Run a command and return output."""
@@ -51,13 +53,13 @@ def test(name, test_func):
     try:
         result = test_func()
         if result:
-            print(f"{GREEN}✓ PASS: {name}{RESET}")
+            print(f"{GREEN}{PASS_SYM}: {name}{RESET}")
             return True
         else:
-            print(f"{RED}✗ FAIL: {name}{RESET}")
+            print(f"{RED}{FAIL_SYM}: {name}{RESET}")
             return False
     except Exception as e:
-        print(f"{RED}✗ ERROR: {name} - {e}{RESET}")
+        print(f"{RED}{FAIL_SYM} ERROR: {name} - {e}{RESET}")
         return False
 
 def cleanup():
@@ -124,16 +126,16 @@ def test_multiple_workers():
     run_command("queuectl worker stop")
     time.sleep(1)
     
-    # Enqueue multiple jobs
+    # Enqueue multiple jobs (using powershell Start-Sleep for Windows compatibility)
     for i in range(3):
-        run_command(f'queuectl enqueue \'{{"id":"multi{i}","command":"timeout /t 1"}}\'')
+        run_command(f'queuectl enqueue \'{{"id":"multi{i}","command":"powershell Start-Sleep -Seconds 1"}}\'')
     
     # Start 2 workers
     run_command_async("queuectl worker start --count 2")
-    time.sleep(1)
+    time.sleep(2)
     
-    # Wait for jobs to complete (3 jobs with 2 workers = 2 batches)
-    time.sleep(3)
+    # Wait for jobs to complete (3 jobs with 2 workers = 2 batches, each job takes 1s + overhead)
+    time.sleep(6)
     
     # Check if all jobs completed
     success, output, _ = run_command("queuectl list --state completed")
@@ -151,15 +153,15 @@ def test_invalid_command():
     run_command_async("queuectl worker start")
     time.sleep(1)
     
-    # Wait a bit
-    time.sleep(1)
+    # Wait for retries with backoff (initial + 2s + 4s + 8s = ~15s for 3 retries)
+    time.sleep(6)
     
     # Job should be in failed state (or DLQ if retries exhausted)
     success, output, _ = run_command("queuectl list --state failed")
     if success and "invalid1" in output:
         return True
     
-    # Or in DLQ
+    # Or in DLQ (most likely after retries)
     success, output, _ = run_command("queuectl dlq list")
     if success and "invalid1" in output:
         return True
@@ -258,7 +260,7 @@ def main():
     total = len(results)
     
     for name, result in results:
-        status = f"{GREEN}PASS{RESET}" if result else f"{RED}FAIL{RESET}"
+        status = f"{GREEN}{PASS_SYM}{RESET}" if result else f"{RED}{FAIL_SYM}{RESET}"
         print(f"{status}: {name}")
     
     print(f"\n{YELLOW}Total: {passed}/{total} tests passed{RESET}")
