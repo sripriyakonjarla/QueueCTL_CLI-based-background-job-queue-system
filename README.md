@@ -554,7 +554,7 @@ QueueCTL/
 
 MIT License - feel free to use for learning and projects.
 
-## 👤 Author
+## Author
 
 **Sripriya Konjarla**
 - GitHub: [@sripriyakonjarla](https://github.com/sripriyakonjarla)
